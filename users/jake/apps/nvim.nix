@@ -26,6 +26,9 @@
       chafa
       viu
       imagemagick
+      tailwindcss-language-server
+      nodePackages.prettier
+      eslint_d
     ];
   };
 

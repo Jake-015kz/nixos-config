@@ -1,17 +1,11 @@
-{ config
-, pkgs
-, inputs
-, ...
-}:
+{ config, pkgs, inputs, ... }:
 
 {
   home.username = "jake";
   home.homeDirectory = "/home/jake";
 
   imports = [
-    # Подключаем модуль plasma-manager из инпутов флаке
     inputs.plasma-manager.homeModules.plasma-manager
-
     ./apps/git.nix
     ./apps/ghostty.nix
     ./apps/vscode.nix
@@ -19,22 +13,42 @@
     ./apps/fish.nix
   ];
 
-  # --- НАСТРОЙКИ KDE PLASMA ---
   programs.plasma = {
     enable = true;
 
-    # Горячие клавиши (открыть Ghostty и закрыть окно)
+    # Вместо kwin.effects используем прямой конфиг, чтобы не ловить ошибки опций
+    configFile."kwinrc"."Plugins"."blurEnabled" = true;
+    configFile."kwinrc"."Plugins"."magiclampEnabled" = true;
+
+    # Настройка панелей (Floating Panel)
+    panels = [
+      {
+        location = "bottom";
+        height = 42;
+        floating = true;
+        widgets = [
+          "org.kde.plasma.kickoff"
+          "org.kde.plasma.pager"
+          "org.kde.plasma.icontasks"
+          "org.kde.plasma.marginsseparator"
+          "org.kde.plasma.systemtray"
+          "org.kde.plasma.digitalclock"
+        ];
+      } 
+    ];
+
+    # Горячие клавиши
     shortcuts = {
       "services/com.mitchellh.ghostty.desktop" = {
         "_launch" = "Meta+Return";
       };
       "kwin" = {
         "Window Close" = "Meta+Q";
-        "Expose" = "Meta+Tab"; # Удобный обзор всех окон
+        "Expose" = "Meta+Tab";
       };
     };
 
-    # Твое предложение №2: Ночной режим по координатам Петропавловска
+    # Ночной режим
     kwin.nightLight = {
       enable = true;
       mode = "location";
@@ -44,7 +58,7 @@
       };
     };
 
-    # Предложение по шрифтам: ставим Inter для интерфейса
+    # Шрифты
     fonts = {
       general = {
         family = "Inter";
@@ -52,6 +66,7 @@
       };
     };
   };
+
 
   home.packages = with pkgs; [
     nodejs_22
@@ -65,7 +80,7 @@
     bibata-cursors
     telegram-desktop
     google-chrome
-    inter # Шрифт Inter
+    inter 
   ];
 
   home.sessionVariables = {
