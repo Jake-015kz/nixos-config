@@ -15,6 +15,7 @@
     ./apps/vscode.nix
     ./apps/nvim.nix
     ./apps/fish.nix
+    ./apps/fuzzel.nix
   ];
 
   programs.plasma = {

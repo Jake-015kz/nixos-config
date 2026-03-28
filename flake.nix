@@ -12,6 +12,11 @@
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,6 +30,7 @@
     , nixpkgs-unstable
     , home-manager
     , chaotic
+    , noctalia
     , ...
     }@inputs:
     let
@@ -51,4 +57,3 @@
       };
     };
 }
-

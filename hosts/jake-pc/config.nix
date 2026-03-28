@@ -14,6 +14,7 @@
     ../../modules/apps/dev.nix
     ../../modules/apps/cli-tools.nix
     ../../modules/system/performance.nix
+    ../../modules/desktop/niri.nix
   ];
 
   # --- ПОДКЛЮЧЕНИЕ HOME MANAGER ---
@@ -26,6 +27,8 @@
   };
 
   programs.fish.enable = true;
+
+  services.supergfxd.enable = true;
 
   # --- ПОЛЬЗОВАТЕЛЬ И АВТОЛОГИН ---
   users.users.jake = {
@@ -50,6 +53,8 @@
 
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
+
+  services.displayManager.defaultSession = "niri";
 
   # --- NIX SETTINGS ---
   nixpkgs.config.allowUnfree = true;
@@ -99,6 +104,7 @@
     pciutils
     usbutils # Системные утилиты
     lm_sensors # Для мониторинга температуры твоего TUF
+    pkgs.asusctl
   ];
 
   environment.sessionVariables = {
