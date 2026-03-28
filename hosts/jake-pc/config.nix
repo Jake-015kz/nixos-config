@@ -13,6 +13,7 @@
     ../../modules/apps/media.nix
     ../../modules/apps/dev.nix
     ../../modules/apps/cli-tools.nix
+    ../../modules/system/performance.nix
   ];
 
   # --- ПОДКЛЮЧЕНИЕ HOME MANAGER ---
@@ -115,6 +116,21 @@
     curl
     expat
   ];
+
+  boot.kernel.sysctl = {
+    "net.core.default_qdisc" = "fq";
+    "net.ipv4.tcp_congestion_control" = "bbr";
+  };
+
+  systemd.services.lactd = {
+    description = "AMDGPU Control Daemon";
+    enable = true;
+    serviceConfig = {
+      ExecStart = "${pkgs.lact}/bin/lact daemon";
+      Restart = "always";
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
 
   system.stateVersion = "25.11";
 }

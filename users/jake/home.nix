@@ -74,8 +74,6 @@
   home.packages = with pkgs; [
     jq
     bibata-cursors
-    telegram-desktop
-    google-chrome
   ];
 
   home.sessionVariables = {
