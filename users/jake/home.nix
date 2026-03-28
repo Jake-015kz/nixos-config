@@ -1,4 +1,8 @@
-{ config, pkgs, inputs, ... }:
+{ config
+, pkgs
+, inputs
+, ...
+}:
 
 {
   home.username = "jake";
@@ -34,7 +38,7 @@
           "org.kde.plasma.systemtray"
           "org.kde.plasma.digitalclock"
         ];
-      } 
+      }
     ];
 
     # Горячие клавиши
@@ -67,20 +71,11 @@
     };
   };
 
-
   home.packages = with pkgs; [
-    nodejs_22
-    nodePackages.pnpm
-    nodePackages.prettier
-    yarn
-    lazygit
-    btop
-    tldr
     jq
     bibata-cursors
     telegram-desktop
     google-chrome
-    inter 
   ];
 
   home.sessionVariables = {
