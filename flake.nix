@@ -1,29 +1,31 @@
 {
-  description = "Ultimate Modular NixOS Config";
+  description = "Jake's Modular NixOS Config";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    windsurf-nvim.url = "github:Exafunction/windsurf.nvim";
 
-    # CachyOS Ядро и оптимизации
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-unstable,
-      home-manager,
-      chaotic,
-      ...
+    { self
+    , nixpkgs
+    , nixpkgs-unstable
+    , home-manager
+    , chaotic
+    , ...
     }@inputs:
     let
       system = "x86_64-linux";
@@ -37,26 +39,16 @@
     {
       nixosConfigurations.jake-pc = nixpkgs.lib.nixosSystem {
         inherit system;
+        # Добавляем inputs в specialArgs, чтобы plasma-manager был доступен везде
         specialArgs = { inherit inputs; };
         modules = [
-          chaotic.nixosModules.default # Подключаем репозиторий CachyOS
-          (
-            { config, pkgs, ... }:
-            {
-              nixpkgs.overlays = [ overlay-unstable ];
-            }
-          )
-          ./hosts/default/configuration.nix
+          chaotic.nixosModules.default
+          { nixpkgs.overlays = [ overlay-unstable ]; }
 
-          # Интеграция Home Manager
+          ./hosts/jake-pc/config.nix
           home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.jake = import ./users/home.nix;
-            home-manager.extraSpecialArgs = { inherit inputs; };
-          }
         ];
       };
     };
 }
+
