@@ -1,0 +1,47 @@
+{
+  "BEM Element": {
+    "prefix": "be",
+    "body": ["&__${1:element} {", "  $0", "}"]
+  },
+  "BEM Modifier": {
+    "prefix": "bm",
+    "body": ["&--${1:modifier} {", "  $0", "}"]
+  },
+  "Flex Center": {
+    "prefix": "flc",
+    "body": [
+      "display: flex;",
+      "align-items: center;",
+      "justify-content: center;"
+    ]
+  },
+
+  "Absolute Center": {
+    "prefix": "absc",
+    "body": [
+      "position: absolute;",
+      "top: 50%;",
+      "left: 50%;",
+      "transform: translate(-50%, -50%);"
+    ],
+    "description": "Центрирование через absolute"
+  },
+  "Transition": {
+    "prefix": "tran",
+    "body": ["transition: all ${1:0.3}s ${2:ease-in-out};"],
+    "description": "Плавный переход"
+  },
+  "Overlay": {
+    "prefix": "over",
+    "body": [
+      "position: absolute;",
+      "top: 0;",
+      "left: 0;",
+      "width: 100%;",
+      "height: 100%;",
+      "background-color: rgba(0, 0, 0, ${1:0.5});",
+      "z-index: ${2:1};"
+    ],
+    "description": "Быстрое наложение (оверлей)"
+  }
+}

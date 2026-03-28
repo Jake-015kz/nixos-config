@@ -1,0 +1,12 @@
+{
+  "Today Date": {
+    "prefix": "today",
+    "body": ["$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE"],
+    "description": "Вставить текущую дату"
+  },
+  "TODO Note": {
+    "prefix": "todo",
+    "body": ["// TODO: ${0:description} ($CURRENT_DATE)"],
+    "description": "Заметка для будущего"
+  }
+}
