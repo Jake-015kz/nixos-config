@@ -21,7 +21,7 @@
   programs.plasma = {
     enable = true;
 
-    # Вместо kwin.effects используем прямой конфиг, чтобы не ловить ошибки опций
+    # Конфиг эффектов напрямую
     configFile."kwinrc"."Plugins"."blurEnabled" = true;
     configFile."kwinrc"."Plugins"."magiclampEnabled" = true;
 
@@ -72,9 +72,15 @@
     };
   };
 
+  # Объединенный список пакетов
   home.packages = with pkgs; [
     jq
     bibata-cursors
+    # Наш скрипт-обработчик AceStream
+    (writeShellScriptBin "acestream-open" ''
+      ID=$(echo "$1" | sed 's|acestream://||; s|/||g')
+      ${pkgs.mpv}/bin/mpv "http://127.0.0.1:6878/ace/getstream?id=$ID"
+    '')
   ];
 
   home.sessionVariables = {
@@ -88,6 +94,27 @@
     package = pkgs.bibata-cursors;
     name = "Bibata-Modern-Classic";
     size = 24;
+  };
+
+  # Настройка ассоциаций для ссылок (MIME types)
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "x-scheme-handler/acestream" = [ "acestream.desktop" ];
+    };
+  };
+
+  # Создаем desktop-файл для системы
+  xdg.desktopEntries."acestream" = {
+    name = "Ace Stream";
+    exec = "acestream-open %u";
+    mimeType = [ "x-scheme-handler/acestream" ];
+    terminal = false;
+    categories = [
+      "AudioVideo"
+      "Video"
+      "Player"
+    ];
   };
 
   home.stateVersion = "25.11";

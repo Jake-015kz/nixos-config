@@ -15,6 +15,7 @@
     ../../modules/apps/cli-tools.nix
     ../../modules/system/performance.nix
     ../../modules/desktop/niri.nix
+    # Модуль acestream.nix больше не нужен, так как всё работает через Docker ниже
   ];
 
   # --- ПОДКЛЮЧЕНИЕ HOME MANAGER ---
@@ -57,9 +58,40 @@
   services.displayManager.defaultSession = "niri";
 
   # --- NIX SETTINGS ---
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+
+    # Эти хаки можно оставить, если используешь Python 3.10 в разработке, 
+    # но для AceStream они теперь не обязательны.
+    packageOverrides = pkgs: {
+      python310 = pkgs.python310.override {
+        packageOverrides = self: super: {
+          certifi = super.certifi.overridePythonAttrs (oldAttrs: {
+            doCheck = false;
+          });
+          apsw = super.apsw.overridePythonAttrs (oldAttrs: {
+            doCheck = false;
+          });
+        };
+      };
+    };
+  };
 
   chaotic.nyx.cache.enable = true;
+
+  # --- ACESTREAM DOCKER SERVICE ---
+  virtualisation.oci-containers.backend = "docker";
+  virtualisation.oci-containers.containers."acestream-engine" = {
+    image = "vstavrinov/acestream-engine";
+    extraOptions = [ 
+      "--net=host" 
+      "--pid=host"
+    ];
+    volumes = [
+      "/home/jake/.ACEStream:/home/acestream/.ACEStream"
+      "/tmp/acestream:/tmp/acestream"
+    ];
+  };
 
   # --- ЯДРО И ЖЕЛЕЗО (Твики для ASUS TUF) ---
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
@@ -73,7 +105,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Bluetooth (часто забывают включить)
+  # Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
 
@@ -84,14 +116,13 @@
     extraPackages = with pkgs; [
       libva-vdpau-driver
       libvdpau-va-gl
-
-    ]; # Ускорение видео
+    ];
   };
 
   networking.hostName = "jake-pc";
   networking.networkmanager.enable = true;
 
-  # Поддержка Docker (ты в группе docker, но сервис нужно включить)
+  # Поддержка Docker
   virtualisation.docker.enable = true;
 
   # --- СИСТЕМНЫЕ ПАКЕТЫ ---
@@ -102,15 +133,17 @@
     fastfetch
     nh
     pciutils
-    usbutils # Системные утилиты
-    lm_sensors # Для мониторинга температуры твоего TUF
+    usbutils
+    lm_sensors
     pkgs.asusctl
+    steam-run
   ];
 
   environment.sessionVariables = {
     NH_FLAKE = "/home/jake/.dotfiles";
   };
 
+  # Поддержка запуска сторонних бинарников (nix-ld)
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     stdenv.cc.cc.lib
@@ -121,6 +154,8 @@
     openssl
     curl
     expat
+    glib
+    libuuid
   ];
 
   boot.kernel.sysctl = {
