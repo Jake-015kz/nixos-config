@@ -32,6 +32,5 @@
     ];
   };
 
-  # Автоматически линкуем твою конфигурацию Lua из .dotfiles/nvim
   xdg.configFile."nvim".source = ../../nvim;
 }

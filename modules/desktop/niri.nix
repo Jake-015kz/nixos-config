@@ -4,7 +4,7 @@
   programs.niri.enable = true;
 
   # Настройки системы (теперь на своем месте)
-  services.logind.lidSwitch = "ignore";
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   environment.systemPackages = with pkgs; [
     inputs.noctalia.packages.${pkgs.system}.default
@@ -126,7 +126,7 @@
     spawn-at-startup "noctalia-shell"
     spawn-at-startup "swaync"
     spawn-at-startup "nm-applet" "--indicator"
-    spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/jake/Pictures/wallpaper.png"
+    spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/jake/Pictures/asus.jpg"
 
     animations {
         slowdown 1.5

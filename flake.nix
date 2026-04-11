@@ -5,22 +5,18 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Тот самый "AUR" для ядер CachyOS
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
-
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+    noctalia.url = "github:noctalia-dev/noctalia-shell";
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
     };
   };
 
@@ -28,9 +24,8 @@
     { self
     , nixpkgs
     , nixpkgs-unstable
-    , home-manager
     , chaotic
-    , noctalia
+    , home-manager
     , ...
     }@inputs:
     let
@@ -45,14 +40,23 @@
     {
       nixosConfigurations.jake-pc = nixpkgs.lib.nixosSystem {
         inherit system;
-        # Добавляем inputs в specialArgs, чтобы plasma-manager был доступен везде
         specialArgs = { inherit inputs; };
         modules = [
-          chaotic.nixosModules.default
+          # Подключаем оверлей и модули Chaotic
           { nixpkgs.overlays = [ overlay-unstable ]; }
+          chaotic.nixosModules.default
 
           ./hosts/jake-pc/config.nix
           home-manager.nixosModules.home-manager
+
+          # Настройка ядра: ставим CachyOS и включаем кэш
+          (
+            { pkgs, ... }:
+            {
+              boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
+              chaotic.nyx.cache.enable = true;
+            }
+          )
         ];
       };
     };
