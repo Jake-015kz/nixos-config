@@ -41,60 +41,130 @@ window-rule {
 
 // Горячие клавиши
 binds {
-    // Noctalia IPC
+    // --- Noctalia IPC Core ---
     Super+Space { spawn "sh" "-c" "noctalia-shell ipc call launcher toggle"; }
     Super+S     { spawn "sh" "-c" "noctalia-shell ipc call controlCenter toggle"; }
     Super+Comma { spawn "sh" "-c" "noctalia-shell ipc call settings toggle"; }
 
-    // Apps
+    // --- Управление приложениями ---
     Super+Return { spawn "ghostty"; }
+    Super+Ctrl+Return { spawn "fuzzel"; }
     Super+B { spawn "firefox"; }
     Super+E { spawn "thunar"; }
     Super+Q { close-window; }
     Super+Alt+L { spawn "swaylock"; }
 
-    // Navigation
+    // --- Навигация по рабочим столам ---
+    Super+1 { focus-workspace 1; }
+    Super+2 { focus-workspace 2; }
+    Super+3 { focus-workspace 3; }
+    Super+4 { focus-workspace 4; }
+    Super+5 { focus-workspace 5; }
+    Super+6 { focus-workspace 6; }
+    Super+7 { focus-workspace 7; }
+    Super+8 { focus-workspace 8; }
+    Super+9 { focus-workspace 9; }
+    Super+Tab { focus-workspace-previous; }
+    
+    // Прокрутка рабочих столов колесом мыши
+    Super+WheelScrollDown { focus-workspace-down; }
+    Super+WheelScrollUp   { focus-workspace-up; }
+
+    // --- Навигация по окнам (Arrows + HJKL) ---
     Super+Left  { focus-column-left; }
     Super+Right { focus-column-right; }
     Super+Up    { focus-window-up; }
     Super+Down  { focus-window-down; }
-
-    // Перекидывание окон на другие мониторы
-    Super+Ctrl+Shift+Left  { move-column-to-monitor-left; }
-    Super+Ctrl+Shift+Right { move-column-to-monitor-right; }
-    Super+Ctrl+Shift+Up    { move-column-to-monitor-up; }
-    Super+Ctrl+Shift+Down  { move-column-to-monitor-down; }
+    Super+H     { focus-column-left; }
+    Super+L     { focus-column-right; }
+    Super+K     { focus-window-up; }
+    Super+J     { focus-window-down; }
     
-    // Monitors (TV)
+    Super+Home { focus-column-first; }
+    Super+End  { focus-column-last; }
+
+    // --- Навигация по мониторам ---
     Super+Shift+Left  { focus-monitor-left; }
     Super+Shift+Right { focus-monitor-right; }
     Super+Shift+Up    { focus-monitor-up; }
     Super+Shift+Down  { focus-monitor-down; }
 
-    // Workspaces
-    Super+1 { focus-workspace 1; }
-    Super+2 { focus-workspace 2; }
-    Super+3 { focus-workspace 3; }
+    // --- Управление окнами (Move) ---
     Super+Ctrl+1 { move-column-to-workspace 1; }
+    Super+Ctrl+2 { move-column-to-workspace 2; }
+    Super+Ctrl+3 { move-column-to-workspace 3; }
+    Super+Ctrl+4 { move-column-to-workspace 4; }
+    Super+Ctrl+5 { move-column-to-workspace 5; }
+    Super+Ctrl+6 { move-column-to-workspace 6; }
+    Super+Ctrl+7 { move-column-to-workspace 7; }
+    Super+Ctrl+8 { move-column-to-workspace 8; }
+    Super+Ctrl+9 { move-column-to-workspace 9; }
+
+    Super+Ctrl+Left  { move-column-left; }
+    Super+Ctrl+Right { move-column-right; }
+    Super+Ctrl+Up    { move-window-up; }
+    Super+Ctrl+Down  { move-window-down; }
+    Super+Ctrl+H     { move-column-left; }
+    Super+Ctrl+L     { move-column-right; }
+    Super+Ctrl+K     { move-window-up; }
+    Super+Ctrl+J     { move-window-down; }
     
-    // Layout management
-    Super+R { switch-preset-column-width; }
+    Super+Ctrl+Home { move-column-to-first; }
+    Super+Ctrl+End  { move-column-to-last; }
+
+    // Перемещение на другие мониторы
+    Super+Shift+Ctrl+Left  { move-column-to-monitor-left; }
+    Super+Shift+Ctrl+Right { move-column-to-monitor-right; }
+    Super+Shift+Ctrl+Up    { move-column-to-monitor-up; }
+    Super+Shift+Ctrl+Down  { move-column-to-monitor-down; }
+
+    // --- Управление макетом (Layout) ---
+    Super+Ctrl+F { fullscreen-window; }
+    Super+C      { center-column; }
+    Super+Ctrl+C { center-column; } // Центрирование видимых (в niri это та же команда)
+    
+    Super+Minus { set-column-width "-10%"; }
+    Super+Equal { set-column-width "+10%"; }
+    Super+Shift+Minus { set-window-height "-10%"; }
+    Super+Shift+Equal { set-window-height "+10%"; }
+
+    // --- Режимы окон ---
+    Super+T { toggle-window-floating; }
     Super+F { maximize-column; }
-    Super+C { center-column; }
     Super+W { toggle-column-tabbed-display; }
     Super+O { toggle-overview; }
+    Super+R { switch-preset-column-width; }
 
-    // Multimedia (Noctalia)
+    // --- Скриншоты (Новые бинды) ---
+    Ctrl+Shift+1 { spawn "sh" "-c" "grim -g \"$(slurp)\" -t png - | wl-copy"; }
+    Ctrl+Shift+2 { spawn "sh" "-c" "grim -t png ~/Pictures/Screenshots/$(date +%Y%m%d_%H%M%S).png"; }
+    Ctrl+Shift+3 { screenshot-window; }
+
+    // --- Управление системой ---
+    Super+Shift+Escape { show-hotkey-overlay; }
+    Super+Escape       { toggle-keyboard-shortcuts-inhibit; }
+    Super+Shift+P      { spawn "sh" "-c" "niri msg action power-off-monitors"; }
+    Ctrl+Alt+Delete    { quit; }
+
+    // --- Мультимедиа (Интеграция с Noctalia) ---
     XF86AudioRaiseVolume allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call volume increase"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call volume decrease"; }
     XF86AudioMute        allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call volume muteOutput"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call volume muteInput"; }
+    
     XF86MonBrightnessUp   allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call brightness increase"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call brightness decrease"; }
 
-    // System
-    Print { spawn "sh" "-c" "grim -g \"$(slurp)\" -t png - | wl-copy"; }
-    Super+Escape { toggle-keyboard-shortcuts-inhibit; }
-    Ctrl+Alt+Delete { quit; }
+    XF86AudioNext  { spawn "playerctl" "next"; }
+    XF86AudioPrev  { spawn "playerctl" "previous"; }
+    XF86AudioPlay  { spawn "playerctl" "play-pause"; }
+    XF86AudioPause { spawn "playerctl" "play-pause"; }
+
+    // --- Продвинутая навигация мыши ---
+    Super+WheelScrollRight      { focus-column-right; }
+    Super+WheelScrollLeft       { focus-column-left; }
+    Super+Ctrl+WheelScrollRight { move-column-right; }
+    Super+Ctrl+WheelScrollLeft  { move-column-left; }
 }
 
 spawn-at-startup "noctalia-shell"
