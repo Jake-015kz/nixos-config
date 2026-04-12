@@ -16,8 +16,9 @@
     ../../modules/apps/dev.nix
     ../../modules/apps/cli-tools.nix
     ../../modules/system/performance.nix
-    ../../modules/desktop/niri.nix
+    ../../modules/desktop/niri
     ../../modules/services/acestream.nix
+    ../../modules/apps/fish.nix
   ];
 
   # --- ВКЛЮЧАЕМ НАШИ МОДУЛИ ---

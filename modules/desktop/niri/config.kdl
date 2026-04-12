@@ -1,0 +1,106 @@
+// Настройки ввода и раскладки
+input {
+    keyboard {
+        xkb {
+            layout "us,ru"
+            options "grp:alt_shift_toggle"
+        }
+    }
+    touchpad {
+        tap
+        natural-scroll
+    }
+}
+
+// Внешний вид и макет
+layout {
+    gaps 12
+    center-focused-column "never"
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+    default-column-width { proportion 0.5; }
+    focus-ring {
+        width 2
+        active-color "#7aa2f7"
+        inactive-color "#414868"
+    }
+}
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+window-rule {
+    match is-active=false
+    opacity 0.8
+}
+
+// Горячие клавиши
+binds {
+    // Noctalia IPC
+    Super+Space { spawn "sh" "-c" "noctalia-shell ipc call launcher toggle"; }
+    Super+S     { spawn "sh" "-c" "noctalia-shell ipc call controlCenter toggle"; }
+    Super+Comma { spawn "sh" "-c" "noctalia-shell ipc call settings toggle"; }
+
+    // Apps
+    Super+Return { spawn "ghostty"; }
+    Super+B { spawn "firefox"; }
+    Super+E { spawn "thunar"; }
+    Super+Q { close-window; }
+    Super+Alt+L { spawn "swaylock"; }
+
+    // Navigation
+    Super+Left  { focus-column-left; }
+    Super+Right { focus-column-right; }
+    Super+Up    { focus-window-up; }
+    Super+Down  { focus-window-down; }
+
+    // Перекидывание окон на другие мониторы
+    Super+Ctrl+Shift+Left  { move-column-to-monitor-left; }
+    Super+Ctrl+Shift+Right { move-column-to-monitor-right; }
+    Super+Ctrl+Shift+Up    { move-column-to-monitor-up; }
+    Super+Ctrl+Shift+Down  { move-column-to-monitor-down; }
+    
+    // Monitors (TV)
+    Super+Shift+Left  { focus-monitor-left; }
+    Super+Shift+Right { focus-monitor-right; }
+    Super+Shift+Up    { focus-monitor-up; }
+    Super+Shift+Down  { focus-monitor-down; }
+
+    // Workspaces
+    Super+1 { focus-workspace 1; }
+    Super+2 { focus-workspace 2; }
+    Super+3 { focus-workspace 3; }
+    Super+Ctrl+1 { move-column-to-workspace 1; }
+    
+    // Layout management
+    Super+R { switch-preset-column-width; }
+    Super+F { maximize-column; }
+    Super+C { center-column; }
+    Super+W { toggle-column-tabbed-display; }
+    Super+O { toggle-overview; }
+
+    // Multimedia (Noctalia)
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call volume increase"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call volume decrease"; }
+    XF86AudioMute        allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call volume muteOutput"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call brightness increase"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "sh" "-c" "noctalia-shell ipc call brightness decrease"; }
+
+    // System
+    Print { spawn "sh" "-c" "grim -g \"$(slurp)\" -t png - | wl-copy"; }
+    Super+Escape { toggle-keyboard-shortcuts-inhibit; }
+    Ctrl+Alt+Delete { quit; }
+}
+
+spawn-at-startup "noctalia-shell"
+spawn-at-startup "swaync"
+spawn-at-startup "nm-applet" "--indicator"
+
+animations {
+    slowdown 1.1
+}
