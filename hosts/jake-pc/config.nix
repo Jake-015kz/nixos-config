@@ -1,9 +1,16 @@
-{ config, pkgs, inputs, lib, ... }:
+{ config
+, pkgs
+, inputs
+, lib
+, ...
+}:
 
 {
   imports = [
     ./hardware.nix
     ../../modules/system/core.nix
+    ../../modules/system/user.nix # Добавлен
+    ../../modules/system/network.nix # Добавлен
     ../../modules/apps/internet.nix
     ../../modules/apps/media.nix
     ../../modules/apps/dev.nix
@@ -13,13 +20,14 @@
     ../../modules/services/acestream.nix
   ];
 
-  # --- СЕТЬ ---
-  networking.hostName = "jake-pc";
-  networking.networkmanager.enable = true;
-  networking.networkmanager.dns = "systemd-resolved";
-  services.resolved.enable = true;
-
-  # --- ЯДРО (Параметры для ASUS TUF / AMD) ---
+  # --- ВКЛЮЧАЕМ НАШИ МОДУЛИ ---
+  jake.system.user.enable = true;
+  jake.system.network = {
+    enable = true;
+    hostName = "jake-pc";
+  };
+  jake.desktop.niri.enable = true;
+  # --- ЯДРО (Параметры для ASUS TUF / AMD остаются здесь, так как это специфика железа) ---
   boot.kernelParams = [
     "amdgpu.backlight=0"
     "acpi_backlight=vendor"
@@ -28,7 +36,7 @@
     "quiet"
   ];
 
-  # --- СЕРВИСЫ ХОСТА ---
+  # --- СЕРВИСЫ ХОСТА (Пока оставляем, вынесем на следующих этапах) ---
   services.fwupd.enable = true;
   services.gvfs.enable = true;
   services.udisks2.enable = true;
@@ -37,7 +45,7 @@
   services.ollama.enable = true;
   virtualisation.docker.enable = true;
 
-  # --- ИНТЕРФЕЙС ---
+  # --- ИНТЕРФЕЙС (Вынесем позже в дисплейный модуль) ---
   services.xserver.enable = true;
   services.displayManager = {
     autoLogin.enable = true;
@@ -49,22 +57,19 @@
     defaultSession = "niri";
   };
 
-  # --- ПОЛЬЗОВАТЕЛЬ ---
-  users.users.jake = {
-    isNormalUser = true;
-    description = "Jake";
-    extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" "docker" "libvirtd" "gamemode" ];
-    shell = pkgs.fish;
-  };
-
-  # --- ПАКЕТЫ ---
+  # --- ПАКЕТЫ ХОСТА (Оставляем только системный минимум) ---
   environment.systemPackages = with pkgs; [
-    wget brightnessctl wl-clipboard fastfetch nh pciutils usbutils duf lsof ltrace
+    wget
+    brightnessctl
+    wl-clipboard
+    fastfetch
+    nh
+    pciutils
+    usbutils
+    duf
+    lsof
+    ltrace
   ];
-
-  environment.sessionVariables = {
-    NH_FLAKE = "/home/jake/.dotfiles";
-  };
 
   # --- HOME MANAGER ---
   home-manager = {
