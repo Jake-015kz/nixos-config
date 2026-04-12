@@ -7,6 +7,8 @@
 
 let
   cfg = config.jake.desktop.niri;
+  # Удобная переменная для вызова IPC Noctalia
+  noctalia-ipc = "noctalia-shell ipc call";
 in
 {
   options.jake.desktop.niri = {
@@ -45,7 +47,7 @@ in
       wl-clipboard
       wlogout
       wl-screenrec
-      swaylock # Добавил, так как он есть в биндах
+      swaylock
     ];
 
     environment.etc."niri/config.kdl".text = ''
@@ -89,9 +91,13 @@ in
       }
 
       binds {
+          // --- Noctalia Core (Заменяем стандартные вызовы) ---
+          Super+Space { spawn "sh" "-c" "${noctalia-ipc} launcher toggle"; }
+          Super+S     { spawn "sh" "-c" "${noctalia-ipc} controlCenter toggle"; }
+          Super+Comma { spawn "sh" "-c" "${noctalia-ipc} settings toggle"; }
+
           // --- Управление приложениями ---
           Super+Return { spawn "ghostty"; }
-          Super+Ctrl+Return { spawn "fuzzel"; }
           Super+B { spawn "firefox"; }
           Super+E { spawn "thunar"; }
           Super+Q { close-window; }
@@ -121,36 +127,25 @@ in
           Super+Ctrl+Right { move-column-right; }
           Super+Ctrl+Up    { move-window-up; }
           Super+Ctrl+Down  { move-window-down; }
-          Super+Ctrl+H     { move-column-left; }
-          Super+Ctrl+L     { move-column-right; }
-          Super+Ctrl+K     { move-window-up; }
-          Super+Ctrl+J     { move-window-down; }
 
-          // --- Перемещение окна на другой монитор ---
+          // --- Перемещение окна на другой монитор (Телевизор) ---
           Super+Ctrl+Shift+Left  { move-column-to-monitor-left; }
           Super+Ctrl+Shift+Right { move-column-to-monitor-right; }
           Super+Ctrl+Shift+Up    { move-column-to-monitor-up; }
           Super+Ctrl+Shift+Down  { move-column-to-monitor-down; }
 
-          // --- Рабочие столы (Воркспейсы) ---
+          // --- Рабочие столы ---
           Super+1 { focus-workspace 1; }
           Super+2 { focus-workspace 2; }
           Super+3 { focus-workspace 3; }
           Super+4 { focus-workspace 4; }
           Super+5 { focus-workspace 5; }
-          Super+6 { focus-workspace 6; }
-          Super+7 { focus-workspace 7; }
-          Super+8 { focus-workspace 8; }
-          Super+9 { focus-workspace 9; }
           Super+Ctrl+1 { move-column-to-workspace 1; }
           Super+Ctrl+2 { move-column-to-workspace 2; }
           Super+Ctrl+3 { move-column-to-workspace 3; }
-          Super+Ctrl+4 { move-column-to-workspace 4; }
-          Super+Ctrl+5 { move-column-to-workspace 5; }
-          
           Super+Tab { focus-workspace-previous; }
 
-          // --- Управление макетом ---
+          // --- Макет ---
           Super+R { switch-preset-column-width; }
           Super+F { maximize-column; }
           Super+Ctrl+F { fullscreen-window; }
@@ -158,23 +153,20 @@ in
           
           Super+Minus { set-column-width "-10%"; }
           Super+Equal { set-column-width "+10%"; }
-          Super+Shift+Minus { set-window-height "-10%"; }
-          Super+Shift+Equal { set-window-height "+10%"; }
-
           Super+W { toggle-column-tabbed-display; }
           Super+O { toggle-overview; }
 
-          // --- Мультимедиа ---
-          XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
-          XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
-          XF86AudioMute        { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-          XF86MonBrightnessUp   { spawn "brightnessctl" "set" "10%+"; }
-          XF86MonBrightnessDown { spawn "brightnessctl" "set" "10%-"; }
+          // --- Мультимедиа (Интеграция с Noctalia) ---
+          XF86AudioRaiseVolume allow-when-locked=true { spawn "sh" "-c" "${noctalia-ipc} volume increase"; }
+          XF86AudioLowerVolume allow-when-locked=true { spawn "sh" "-c" "${noctalia-ipc} volume decrease"; }
+          XF86AudioMute        allow-when-locked=true { spawn "sh" "-c" "${noctalia-ipc} volume muteOutput"; }
+          XF86MonBrightnessUp   allow-when-locked=true { spawn "sh" "-c" "${noctalia-ipc} brightness increase"; }
+          XF86MonBrightnessDown allow-when-locked=true { spawn "sh" "-c" "${noctalia-ipc} brightness decrease"; }
 
           // --- Системные ---
           Print { spawn "sh" "-c" "grim -g \"$(slurp)\" -t png - | wl-copy"; }
           Super+Shift+E { spawn "wlogout"; }
-          Super+Escape { toggle-keyboard-shortcuts-inhibit; } // Из документации
+          Super+Escape { toggle-keyboard-shortcuts-inhibit; }
           Ctrl+Alt+Delete { quit; }
       }
 
@@ -183,13 +175,14 @@ in
       spawn-at-startup "nm-applet" "--indicator"
 
       animations {
-          slowdown 1.5
+          slowdown 1.1
       }
     '';
 
     systemd.user.tmpfiles.rules = [
       "L+ %h/.config/niri/config.kdl - - - - /etc/niri/config.kdl"
     ];
+
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";
       MOZ_ENABLE_WAYLAND = "1";
