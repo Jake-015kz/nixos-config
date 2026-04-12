@@ -46,13 +46,12 @@
   virtualisation.docker.enable = true;
 
   # --- ИНТЕРФЕЙС (Вынесем позже в дисплейный модуль) ---
-  services.xserver.enable = true;
   services.displayManager = {
     autoLogin.enable = true;
     autoLogin.user = "jake";
     sddm = {
       enable = true;
-      wayland.enable = false;
+      wayland.enable = true;
     };
     defaultSession = "niri";
   };
