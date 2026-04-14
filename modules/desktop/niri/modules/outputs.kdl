@@ -1,0 +1,13 @@
+// Настройка мониторов
+output "HDMI-A-1" {
+    // Твой телек LG
+    mode "1920x1080@60"
+    logical-position x=1920 y=0
+}
+
+output "eDP-1" {
+    // Экран ноутбука ASUS
+    mode "1920x1080@60"
+    // Ставим его сразу после телека (1920 + 0)
+    logical-position x=0 y=0
+}
