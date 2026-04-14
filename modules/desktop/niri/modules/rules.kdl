@@ -1,0 +1,46 @@
+// --- АВТО-ТАЙЛИНГ ПРАВИЛА ---
+
+// Глобальные настройки
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// Прозрачность для неактивных
+window-rule {
+    match is-active=false
+    opacity 0.8
+}
+
+// --- РАБОЧЕЕ ОКРУЖЕНИЕ ---
+
+// Терминал (Ghostty) — теперь с правильным App ID
+window-rule {
+    match app-id="com.mitchellh.ghostty"
+    default-column-width { proportion 0.6; }
+}
+
+// Firefox
+window-rule {
+    match app-id="firefox"
+    default-column-width { proportion 0.4; }
+}
+
+// Neovim (если заголовок начинается с 'v' или 'nvim')
+window-rule {
+    match title="^v "
+    match title="^nvim"
+    open-maximized true
+}
+
+// --- ПЛАВАЮЩИЕ ОКНА ---
+window-rule {
+    match app-id="org.qbittorrent.qBittorrent"
+    match app-id="mpv"
+    match app-id="haruna"
+    match app-id="vlc"
+    match app-id="pavucontrol"
+    match app-id="lact"
+    
+    open-floating true
+}

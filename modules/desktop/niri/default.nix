@@ -44,11 +44,24 @@ in
     ];
 
     # Подключаем внешний KDL файл
-    environment.etc."niri/config.kdl".source = ./config.kdl;
+    environment.etc = {
+      "niri/config.kdl".source = ./config.kdl;
+      # Закидываем файлы в подпапку niri/modules/
+      "niri/modules/input.kdl".source = ./modules/input.kdl;
+      "niri/modules/layout.kdl".source = ./modules/layout.kdl;
+      "niri/modules/styling.kdl".source = ./modules/styling.kdl;
+      "niri/modules/binds.kdl".source = ./modules/binds.kdl;
+      "niri/modules/rules.kdl".source = ./modules/rules.kdl;
+    };
 
-    # Создаем симлинк в домашнюю папку для работы конфига "на лету"
     systemd.user.tmpfiles.rules = [
       "L+ %h/.config/niri/config.kdl - - - - /etc/niri/config.kdl"
+      # Создаём симлинки на папку modules
+      "L+ %h/.config/niri/modules/input.kdl - - - - /etc/niri/modules/input.kdl"
+      "L+ %h/.config/niri/modules/layout.kdl - - - - /etc/niri/modules/layout.kdl"
+      "L+ %h/.config/niri/modules/styling.kdl - - - - /etc/niri/modules/styling.kdl"
+      "L+ %h/.config/niri/modules/binds.kdl - - - - /etc/niri/modules/binds.kdl"
+      "L+ %h/.config/niri/modules/rules.kdl - - - - /etc/niri/modules/rules.kdl"
     ];
 
     environment.sessionVariables = {

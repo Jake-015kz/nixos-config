@@ -69,6 +69,9 @@
     duf
     lsof
     ltrace
+    kdePackages.dolphin # Проводник
+    kdePackages.ark # Архиватор
+    kdePackages.kio-extras # Для превью и расширенных функций Dolphin
   ];
 
   # --- HOME MANAGER ---

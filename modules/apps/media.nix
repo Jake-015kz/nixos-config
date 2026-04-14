@@ -5,6 +5,6 @@
     mpv
     vlc
     yt-dlp
+    haruna
   ];
 }
-
