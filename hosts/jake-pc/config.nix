@@ -1,8 +1,9 @@
-{ config
-, pkgs
-, inputs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  inputs,
+  lib,
+  ...
 }:
 
 {
@@ -19,6 +20,8 @@
     ../../modules/desktop/niri
     ../../modules/services/acestream.nix
     ../../modules/apps/fish.nix
+    ../../modules/hardware/audio.nix
+    ../../modules/system/bluetooth.nix
   ];
 
   # --- ВКЛЮЧАЕМ НАШИ МОДУЛИ ---
